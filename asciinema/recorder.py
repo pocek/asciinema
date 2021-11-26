@@ -12,7 +12,9 @@ def record(path, command=None, append=False, idle_time_limit=None,
            capture_env=None, writer=v2.writer, record=pty.record, notifier=None,
            key_bindings={}):
     if command is None:
-        command = os.environ.get('SHELL') or 'sh'
+        command = [os.environ.get('SHELL') or 'sh']
+    else:
+        command = ['sh', '-c', command]
 
     if command_env is None:
         command_env = os.environ.copy()
@@ -48,7 +50,7 @@ def record(path, command=None, append=False, idle_time_limit=None,
 
     def _record(writer, notifier):
         record(
-            ['sh', '-c', command],
+            command,
             writer,
             command_env,
             rec_stdin,
