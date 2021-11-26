@@ -142,10 +142,14 @@ def record(command, writer, env=os.environ, rec_stdin=False, time_offset=0, noti
                         elif sig == signal.SIGWINCH:
                             _set_pty_size()
 
-    pid, master_fd = pty.fork()
+    if isinstance(command, int):
+        pid = None
+        master_fd = command
+    else:
+        pid, master_fd = pty.fork()
 
-    if pid == pty.CHILD:
-        os.execvpe(command[0], command, env)
+        if pid == pty.CHILD:
+            os.execvpe(command[0], command, env)
 
     pipe_r, pipe_w = os.pipe()
     flags = fcntl.fcntl(pipe_w, fcntl.F_GETFL, 0)
@@ -173,4 +177,5 @@ def record(command, writer, env=os.environ, rec_stdin=False, time_offset=0, noti
 
     _signals(old_handlers)
 
-    os.waitpid(pid, 0)
+    if pid:
+        os.waitpid(pid, 0)
