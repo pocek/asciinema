@@ -13,7 +13,7 @@ def record(path, command=None, append=False, idle_time_limit=None,
            key_bindings={}):
     if command is None:
         command = [os.environ.get('SHELL') or 'sh']
-    else:
+    elif isinstance(command, str):
         command = ['sh', '-c', command]
 
     if command_env is None:
