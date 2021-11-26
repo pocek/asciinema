@@ -64,10 +64,6 @@ class CustomCommandNotifier(Notifier):
         subprocess.run(args, env=env, capture_output=True)
 
 
-class NoopNotifier():
-    def notify(self, text):
-        pass
-
 
 def get_notifier(enabled=True, command=None):
     if enabled:
@@ -79,5 +75,3 @@ def get_notifier(enabled=True, command=None):
 
                 if n.is_available():
                     return n
-
-    return NoopNotifier()

@@ -46,17 +46,23 @@ def record(path, command=None, append=False, idle_time_limit=None,
     if append and os.stat(path).st_size > 0:
         time_offset = v2.get_duration(path)
 
+    def _record(writer, notifier):
+        record(
+            ['sh', '-c', command],
+            writer,
+            command_env,
+            rec_stdin,
+            time_offset,
+            notifier,
+            key_bindings
+        )
+
     with async_writer(writer, path, full_metadata, append) as w:
-        with async_notifier(notifier) as n:
-            record(
-                ['sh', '-c', command],
-                w,
-                command_env,
-                rec_stdin,
-                time_offset,
-                n,
-                key_bindings
-            )
+        if notifier:
+            with async_notifier(notifier) as n:
+                _record(w, n)
+        else:
+            _record(w, None)
 
 
 class async_writer(async_worker):
