@@ -1,14 +1,11 @@
 import array
 import errno
 import fcntl
-import io
 import os
 import pty
 import select
-import shlex
 import signal
 import struct
-import sys
 import termios
 import time
 
