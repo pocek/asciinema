@@ -35,10 +35,10 @@ def record(command, writer, env=os.environ, rec_stdin=False, time_offset=0, noti
 
         # Get the terminal size of the real terminal, set it on the pseudoterminal.
         if os.isatty(pty.STDOUT_FILENO):
-            buf = array.array('h', [0, 0, 0, 0])
+            buf = array.array('H', [0, 0, 0, 0])
             fcntl.ioctl(pty.STDOUT_FILENO, termios.TIOCGWINSZ, buf, True)
         else:
-            buf = array.array('h', [24, 80, 0, 0])
+            buf = array.array('H', [24, 80, 0, 0])
 
         fcntl.ioctl(master_fd, termios.TIOCSWINSZ, buf)
 
