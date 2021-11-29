@@ -149,6 +149,10 @@ def record(command, writer, env=os.environ, rec_stdin=False, time_offset=0, noti
         pid, master_fd = pty.fork()
 
         if pid == pty.CHILD:
+            # Ideally the window size should be set right here. Otherwise if
+            # the child is fast enough it may get a zero size. It looks like it
+            # doesn't happen in practice if we exec here but YMMV.
+
             os.execvpe(command[0], command, env)
 
     pipe_r, pipe_w = os.pipe()
@@ -164,8 +168,12 @@ def record(command, writer, env=os.environ, rec_stdin=False, time_offset=0, noti
                                     signal.SIGHUP,
                                     signal.SIGTERM,
                                     signal.SIGQUIT]))
-
-    _set_pty_size()
+    if pid:
+        _set_pty_size()
+    else:
+        # The caller should handle setting window size in the child in this
+        # case. Otherwise it's racy so don't even try.
+        pass
 
     start_time = time.time() - time_offset
 
