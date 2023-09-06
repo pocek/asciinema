@@ -118,6 +118,10 @@ class writer():
         data = self.stdin_decoder.decode(data)
         self.__write_event(ts, 'i', data)
 
+    def write_resize(self, ts, size):
+        cols, rows = size
+        self.__write_event(ts, 'r', f'{cols}x{rows}')
+
     def __write_event(self, ts, etype, data):
         self.__write_line([round(ts, 6), etype, data])
 
